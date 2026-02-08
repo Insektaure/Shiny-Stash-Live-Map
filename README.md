@@ -71,6 +71,13 @@ Shiny-Stash-Live-Map/
     species_en.txt          Pokemon species name table
 ```
 
+## Screenshots
+<div align="center">
+    <img src="screenshots/001.jpg" alt="Screenshot 001">
+    <img src="screenshots/002.jpg" alt="Screenshot 002">
+    <img src="screenshots/003.jpg" alt="Screenshot 003">
+</div>
+
 ## Disclaimer
 
 This application is currently **in development** and may contain bugs or incomplete features. It is provided "as-is" without warranty of any kind. The authors cannot be held responsible for any damage to your console, save data, or any other issues arising from the use of this software. Use at your own risk.
