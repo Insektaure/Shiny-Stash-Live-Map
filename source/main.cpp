@@ -697,7 +697,7 @@ static void renderAbout() {
     drawBorder(bx, by, bw, bh, COL_BORDER);
 
     int x = bx + 30, y = by + 24;
-    drawText(g_fontLg, "Pokemon Legends Z-A Shiny Map", x, y, COL_GOLD);
+    drawText(g_fontLg, "Pokemon Legends Z-A Shiny Stash Live Map", x, y, COL_GOLD);
     y += 40;
     drawText(g_fontSm, "v1.0.0 - Developed by Insektaure (github.com/Insektaure)", x, y, COL_DIMGRAY);
     y += 20;
