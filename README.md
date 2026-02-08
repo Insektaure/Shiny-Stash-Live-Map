@@ -47,7 +47,7 @@ The `dmnt:cht` library (`libdmntcht.a` and `include/switch/dmntcht.h`) is bundle
 ### Build
 
 ```bash
-make
+make all
 ```
 
 This produces `Shiny-Stash-Live-Map.nro`. Copy it to your Switch's SD card under `/switch/`.

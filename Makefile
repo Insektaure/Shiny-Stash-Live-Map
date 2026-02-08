@@ -10,7 +10,7 @@ TOPDIR ?= $(CURDIR)
 include $(DEVKITPRO)/libnx/switch_rules
 
 #---------------------------------------------------------------------------------
-APP_TITLE	:=	Pokemon Z-A Shiny Stash Live Map
+APP_TITLE	:=	Shiny Stash Live Map
 APP_VERSION :=	1.0.0
 APP_AUTHOR	:=	Insektaure
 
