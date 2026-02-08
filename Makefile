@@ -10,8 +10,8 @@ TOPDIR ?= $(CURDIR)
 include $(DEVKITPRO)/libnx/switch_rules
 
 #---------------------------------------------------------------------------------
-APP_TITLE	:=	Shiny Stash Live Map
-APP_VERSION :=	1.0.0
+APP_TITLE	:=	Lumiose - Shiny Stash Live Map
+APP_VERSION :=	1.0.1
 APP_AUTHOR	:=	Insektaure
 
 TARGET		:=	$(notdir $(CURDIR))

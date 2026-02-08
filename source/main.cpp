@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
 
 // ============================================================
 // Constants
@@ -119,6 +120,24 @@ static int  g_scrollOff  = 0;
 static const SpawnerEntry* g_selSpawner = nullptr;
 static std::string g_statusMsg = "Press A to read game memory";
 static bool g_showAbout  = false;
+
+static std::unordered_map<u16, SDL_Texture*> g_spriteCache;
+static constexpr int SPRITE_SIZE = 40;  // display size in the list
+
+static SDL_Texture* getSpriteTex(u16 nationalDex) {
+    auto it = g_spriteCache.find(nationalDex);
+    if (it != g_spriteCache.end()) return it->second;
+    char path[64];
+    snprintf(path, sizeof(path), "romfs:/sprites/%03u.png", nationalDex);
+    SDL_Surface* surf = IMG_Load(path);
+    SDL_Texture* tex = nullptr;
+    if (surf) {
+        tex = SDL_CreateTextureFromSurface(g_renderer, surf);
+        SDL_FreeSurface(surf);
+    }
+    g_spriteCache[nationalDex] = tex;  // cache nullptr too to avoid retrying
+    return tex;
+}
 
 // ============================================================
 // PKX Decryption (LCRNG XOR + Block Shuffle)
@@ -600,9 +619,18 @@ static void renderList() {
         if (sel)
             drawRect(LIST_X, iy, LIST_W, ITEM_H - 4, COL_SEL);
 
+        // Pokemon image
+        int textOffX = 14;
+        SDL_Texture* spriteTex = getSpriteTex(g_entries[idx].nationalDex);
+        if (spriteTex) {
+            SDL_Rect dst = {LIST_X + 10, iy + (ITEM_H - 4 - SPRITE_SIZE) / 2, SPRITE_SIZE, SPRITE_SIZE};
+            SDL_RenderCopy(g_renderer, spriteTex, nullptr, &dst);
+            textOffX = 10 + SPRITE_SIZE + 6;
+        }
+
         // Species name
         const char* name = getSpeciesName(g_entries[idx].nationalDex);
-        drawText(g_fontMd, name, LIST_X + 14, iy + 4,
+        drawText(g_fontMd, name, LIST_X + textOffX, iy + 4,
                  sel ? COL_WHITE : SDL_Color{0xCC, 0xCC, 0xCC, 0xFF});
 
         // Dex number right-aligned
@@ -613,10 +641,10 @@ static void renderList() {
         // Location name on second line
         const SpawnerEntry* sp = findSpawner(g_entries[idx].hash);
         if (sp) {
-            drawText(g_fontSm, sp->location.c_str(), LIST_X + 14, iy + 30, COL_DIMGRAY);
+            drawText(g_fontSm, sp->location.c_str(), LIST_X + textOffX, iy + 30, COL_DIMGRAY);
             drawTextRight(g_fontSm, g_mapNames[sp->mapIdx], LIST_X + LIST_W - 10, iy + 30, {0x44,0x66,0x88,0xFF});
         } else {
-            drawText(g_fontSm, "Unknown location", LIST_X + 14, iy + 30, {0x66,0x44,0x44,0xFF});
+            drawText(g_fontSm, "Unknown location", LIST_X + textOffX, iy + 30, {0x66,0x44,0x44,0xFF});
         }
 
         // Bottom separator
@@ -670,6 +698,9 @@ static bool initFonts() {
 }
 
 static void cleanup() {
+    for (auto& p : g_spriteCache)
+        if (p.second) SDL_DestroyTexture(p.second);
+    g_spriteCache.clear();
     for (int i = 0; i < 4; i++)
         if (g_mapTex[i]) SDL_DestroyTexture(g_mapTex[i]);
     if (g_fontLg) TTF_CloseFont(g_fontLg);
@@ -697,9 +728,9 @@ static void renderAbout() {
     drawBorder(bx, by, bw, bh, COL_BORDER);
 
     int x = bx + 30, y = by + 24;
-    drawText(g_fontLg, "Shiny Stash Live Map", x, y, COL_GOLD);
+    drawText(g_fontLg, "Lumiose - Shiny Stash Live Map", x, y, COL_GOLD);
     y += 40;
-    drawText(g_fontSm, "v1.0.0 - Developed by Insektaure (github.com/Insektaure)", x, y, COL_DIMGRAY);
+    drawText(g_fontSm, "v1.0.1 - Developed by Insektaure (github.com/Insektaure)", x, y, COL_DIMGRAY);
     y += 20;
     drawText(g_fontSm, "For game version 2.0.1", x, y, COL_GRAY);
     y += 30;
