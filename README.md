@@ -50,12 +50,12 @@ The `dmnt:cht` library (`libdmntcht.a` and `include/switch/dmntcht.h`) is bundle
 make
 ```
 
-This produces `zashinymap.nro`. Copy it to your Switch's SD card under `/switch/zashinymap/`.
+This produces `Shiny-Stash-Live-Map.nro`. Copy it to your Switch's SD card under `/switch/`.
 
 ## Project structure
 
 ```
-zashinymap/
+Shiny-Stash-Live-Map/
   source/main.cpp          Main application source
   include/switch/dmntcht.h  dmnt:cht service header
   lib/libdmntcht.a          dmnt:cht static library
