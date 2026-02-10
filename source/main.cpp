@@ -732,7 +732,7 @@ static void renderAbout() {
     int x = bx + 30, y = by + 24;
     drawText(g_fontLg, "Lumiose - Shiny Stash Live Map", x, y, COL_GOLD);
     y += 40;
-    drawText(g_fontSm, "v1.0.1 - Developed by Insektaure (github.com/Insektaure)", x, y, COL_DIMGRAY);
+    drawText(g_fontSm, "v1.0.2 - Developed by Insektaure (github.com/Insektaure)", x, y, COL_DIMGRAY);
     y += 20;
     drawText(g_fontSm, "For game version 2.0.1", x, y, COL_GRAY);
     y += 30;
