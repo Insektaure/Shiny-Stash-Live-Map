@@ -446,6 +446,8 @@ static void readShinyStash() {
             if (specInt == 0) continue; // skip empty entries
             u16 ndex = getNational9(specInt);
 
+            if (!findSpawner(hash)) continue; // skip entries with no known spawn location
+
             bool dup = false;
             for (auto& e : g_entries)
                 if (e.hash == hash) { dup = true; break; }
@@ -561,7 +563,7 @@ static void renderInfo() {
         drawText(g_fontSm, g_selSpawner->location.c_str(), MAP_AREA_X + 160, y, COL_GRAY);
 
         char buf[96];
-        snprintf(buf, sizeof(buf), "X: %.1f  Z: %.1f", g_selSpawner->x, g_selSpawner->z);
+        snprintf(buf, sizeof(buf), "X: %.1f  Y: %.1f  Z: %.1f", g_selSpawner->x, g_selSpawner->y, g_selSpawner->z);
         drawTextRight(g_fontSm, buf, MAP_AREA_X + MAP_AREA_W, y, COL_DIMGRAY);
     } else if (!g_entries.empty() && g_selIdx < (int)g_entries.size()) {
         char buf[48];
