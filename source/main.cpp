@@ -26,7 +26,20 @@ static constexpr int SHINY_STASH_SIZE  = 4960;
 static constexpr int ENTRY_SIZE        = 0x1F0;
 static constexpr int PA9_DATA_OFFSET   = 0x08;  // hash(8) then PA9 starts
 static constexpr int PA9_SPECIES_OFF   = 0x08;  // species u16 within PA9
-static constexpr u64 PTR_OFFSETS[]     = {0x610A710, 0x120, 0x168, 0x0};
+static constexpr u64 PTR_CHAIN[]       = {0x120, 0x168, 0x0};
+
+// Version detection via build ID (first 8 bytes of main_nso_build_id)
+struct GameVersion {
+    u8 build_id[8];
+    const char* version;
+    u64 basePointer;
+};
+
+static const GameVersion g_versions[] = {
+    {{0xBC,0xE5,0xD5,0x39,0x3B,0x5A,0xA3,0xA8}, "2.0.1", 0x610A710},
+    {{0x8A,0x1C,0x86,0xC4,0x37,0x39,0x4B,0x69}, "2.0.0", 0x6105710},
+    {{0x17,0x9C,0x38,0x43,0xB9,0x84,0xF8,0x78}, "1.0.3", 0x5F0E250},
+};
 
 // Layout
 static constexpr int MAP_AREA_X = 20;
@@ -119,6 +132,8 @@ static int  g_selIdx     = 0;
 static int  g_scrollOff  = 0;
 static const SpawnerEntry* g_selSpawner = nullptr;
 static std::string g_statusMsg = "Press A to read game memory";
+static std::string g_gameVersion;
+static std::string g_detectedBid;
 static bool g_showAbout  = false;
 
 static std::unordered_map<u16, SDL_Texture*> g_spriteCache;
@@ -388,6 +403,7 @@ static void readShinyStash() {
     g_selIdx = 0;
     g_scrollOff = 0;
     g_selSpawner = nullptr;
+    g_detectedBid.clear();
 
     Result rc = dmntchtInitialize();
     if (R_FAILED(rc)) { g_statusMsg = "dmntcht init failed"; return; }
@@ -417,12 +433,35 @@ static void readShinyStash() {
     }
 
     {
-        u64 addr = meta.main_nso_extents.base + PTR_OFFSETS[0];
+        // Detect game version from build ID
+        char bid[24];
+        snprintf(bid, sizeof(bid), "%02X%02X%02X%02X%02X%02X%02X%02X",
+            meta.main_nso_build_id[0], meta.main_nso_build_id[1],
+            meta.main_nso_build_id[2], meta.main_nso_build_id[3],
+            meta.main_nso_build_id[4], meta.main_nso_build_id[5],
+            meta.main_nso_build_id[6], meta.main_nso_build_id[7]);
+        g_detectedBid = bid;
+
+        const GameVersion* ver = nullptr;
+        for (const auto& v : g_versions) {
+            if (memcmp(meta.main_nso_build_id, v.build_id, 8) == 0) {
+                ver = &v;
+                break;
+            }
+        }
+        if (!ver) {
+            g_statusMsg = "Unsupported game version";
+            g_gameVersion.clear();
+            goto done;
+        }
+        g_gameVersion = ver->version;
+
+        u64 addr = meta.main_nso_extents.base + ver->basePointer;
         u64 ptr;
         for (int i = 0; i < 3; i++) {
             rc = dmntchtReadCheatProcessMemory(addr, &ptr, sizeof(u64));
             if (R_FAILED(rc)) { g_statusMsg = "Pointer resolve failed"; goto done; }
-            addr = ptr + PTR_OFFSETS[i + 1];
+            addr = ptr + PTR_CHAIN[i];
         }
 
         u8* buf = (u8*)malloc(SHINY_STASH_SIZE);
@@ -459,7 +498,7 @@ static void readShinyStash() {
         if (g_entries.empty())
             g_statusMsg = "Shiny stash is empty";
         else {
-            g_statusMsg = std::to_string(g_entries.size()) + " shiny entries loaded";
+            g_statusMsg = std::to_string(g_entries.size()) + " shiny entries loaded (v" + g_gameVersion + ")";
             updateSelection();
         }
     }
@@ -569,6 +608,11 @@ static void renderInfo() {
         char buf[48];
         snprintf(buf, sizeof(buf), "Hash: %016llX", (unsigned long long)g_entries[g_selIdx].hash);
         drawText(g_fontSm, buf, MAP_AREA_X + 4, y, COL_DIMGRAY);
+    } else if (!g_detectedBid.empty()) {
+        std::string bidLine = "BID: " + g_detectedBid;
+        drawText(g_fontSm, bidLine.c_str(), MAP_AREA_X + 4, y, COL_CYAN);
+        drawText(g_fontSm, g_statusMsg.c_str(), MAP_AREA_X + 4, y + 18, COL_RED);
+        y += 18;
     } else {
         drawText(g_fontSm, g_statusMsg.c_str(), MAP_AREA_X + 4, y, COL_DIMGRAY);
     }
@@ -732,9 +776,14 @@ static void renderAbout() {
     int x = bx + 30, y = by + 24;
     drawText(g_fontLg, "Lumiose - Shiny Stash Live Map", x, y, COL_GOLD);
     y += 40;
-    drawText(g_fontSm, "v1.0.2 - Developed by Insektaure (github.com/Insektaure)", x, y, COL_DIMGRAY);
+    drawText(g_fontSm, "v" APP_VERSION " - Developed by Insektaure (github.com/Insektaure)", x, y, COL_DIMGRAY);
     y += 20;
-    drawText(g_fontSm, "For game version 2.0.1", x, y, COL_GRAY);
+    if (g_gameVersion.empty())
+        drawText(g_fontSm, "Supported: 1.0.3, 2.0.0, 2.0.1", x, y, COL_GRAY);
+    else {
+        std::string verStr = "Game version: " + g_gameVersion;
+        drawText(g_fontSm, verStr.c_str(), x, y, COL_GRAY);
+    }
     y += 30;
 
     SDL_SetRenderDrawColor(g_renderer, COL_BORDER.r, COL_BORDER.g, COL_BORDER.b, 0xFF);
