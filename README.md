@@ -14,6 +14,17 @@ A Nintendo Switch homebrew application that reads the Shiny Stash from **Pokemon
 
 Game version **2.0.1**
 
+## How to use
+
+1. Launch Pokemon Legends: Z-A.
+2. Press the **Home** button and launch the Homebrew Menu via the Album icon.
+3. Start the Shiny Stash Live Map homebrew application from the Homebrew Menu.
+4. The app will automatically read the Shiny Stash from the game's memory and display the list of stashed shiny Pokemon along with their spawn locations on the map.
+5. Use the D-Pad to navigate the list of stashed Pokemon. The selected Pokemon's spawn point will be highlighted on the map, and other stashed Pokemon on the same map will be shown as gold dots.
+6. Press the **-** button to toggle the About screen with project information and credits.
+7. Press the **+** button to exit the application and return to the Homebrew Menu
+
+
 ## Requirements
 
 - Nintendo Switch with [Atmosphere](https://github.com/Atmosphere-NX/Atmosphere) CFW
