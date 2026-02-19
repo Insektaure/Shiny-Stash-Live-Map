@@ -11,3 +11,4 @@ builddir
 .DS_Store
 !.github/
 .idea/*
+external/*
