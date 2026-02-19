@@ -10,9 +10,13 @@ A Nintendo Switch homebrew application that reads the Shiny Stash from **Pokemon
 - All other stash entries on the same map are shown as gold dots for an overview of your shiny locations
 - Decrypts PKX-encrypted PA9 data and converts Gen9 internal species IDs to National Dex numbers
 
-## Compatible game version
+## Compatible game versions
 
-Game version **2.0.1**
+The application automatically detects the running game version and adjusts accordingly. Supported versions:
+
+- **1.0.3**
+- **2.0.0**
+- **2.0.1**
 
 ## How to use
 
