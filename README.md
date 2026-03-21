@@ -17,6 +17,7 @@ The application automatically detects the running game version and adjusts accor
 - **1.0.3**
 - **2.0.0**
 - **2.0.1**
+- **2.0.2**
 
 ## How to use
 

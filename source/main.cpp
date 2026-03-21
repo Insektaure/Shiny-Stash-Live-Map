@@ -36,6 +36,7 @@ struct GameVersion {
 };
 
 static const GameVersion g_versions[] = {
+    {{0xB1,0xF1,0x2F,0xD9,0x19,0xEA,0xE8,0x6A}, "2.0.2", 0x610A710},
     {{0xBC,0xE5,0xD5,0x39,0x3B,0x5A,0xA3,0xA8}, "2.0.1", 0x610A710},
     {{0x8A,0x1C,0x86,0xC4,0x37,0x39,0x4B,0x69}, "2.0.0", 0x6105710},
     {{0x17,0x9C,0x38,0x43,0xB9,0x84,0xF8,0x78}, "1.0.3", 0x5F0E250},
@@ -779,7 +780,7 @@ static void renderAbout() {
     drawText(g_fontSm, "v" APP_VERSION " - Developed by Insektaure (github.com/Insektaure)", x, y, COL_DIMGRAY);
     y += 20;
     if (g_gameVersion.empty())
-        drawText(g_fontSm, "Supported: 1.0.3, 2.0.0, 2.0.1", x, y, COL_GRAY);
+        drawText(g_fontSm, "Supported: 1.0.3, 2.0.0, 2.0.1, 2.0.2", x, y, COL_GRAY);
     else {
         std::string verStr = "Game version: " + g_gameVersion;
         drawText(g_fontSm, verStr.c_str(), x, y, COL_GRAY);
