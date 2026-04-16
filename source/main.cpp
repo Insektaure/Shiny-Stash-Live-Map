@@ -783,7 +783,7 @@ static void renderAbout() {
     drawText(g_fontSm, "v" APP_VERSION " - Developed by Insektaure (github.com/Insektaure)", x, y, COL_DIMGRAY);
     y += 20;
     if (g_gameVersion.empty())
-        drawText(g_fontSm, "Supported: 1.0.3, 2.0.0, 2.0.1, 2.0.2", x, y, COL_GRAY);
+        drawText(g_fontSm, "Supported: 1.0.0/1.0.1, 1.0.2, 1.0.3, 2.0.0, 2.0.1, 2.0.2", x, y, COL_GRAY);
     else {
         std::string verStr = "Game version: " + g_gameVersion;
         drawText(g_fontSm, verStr.c_str(), x, y, COL_GRAY);
